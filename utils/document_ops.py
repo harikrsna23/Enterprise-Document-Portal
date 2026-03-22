@@ -45,13 +45,22 @@ def concat_for_comparison(ref_docs: List[Document], act_docs: List[Document]) ->
 
 # ---------- Helpers ----------
 class FastAPIFileAdapter:
-    """Adapt FastAPI UploadFile -> .name + .getbuffer() API"""
+    """Adapt FastAPI UploadFile .name + .getbuffer() API"""
     def __init__(self, uf: UploadFile):
         self._uf = uf
-        self.name = uf.filename
+        # handle both FastAPI (filename) and Streamlit (name)
+        self.name = getattr(uf, 'name', None) or getattr(uf, 'filename', None)
+
     def getbuffer(self) -> bytes:
-        self._uf.file.seek(0)
-        return self._uf.file.read()
+        # handle both FastAPI and Streamlit uploaded file objects
+        if hasattr(self._uf, 'getbuffer'):
+            return self._uf.getbuffer()
+        elif hasattr(self._uf, 'read'):
+            data = self._uf.read()
+            if hasattr(self._uf, 'seek'):
+                self._uf.seek(0)
+            return data
+        raise RuntimeError("Cannot read file buffer")
 
 def read_pdf_via_handler(handler, path: str) -> str:
     if hasattr(handler, "read_pdf"):
