@@ -1,7 +1,6 @@
 faiss_db:
   collection_name: "document_portal"
 
-
 embedding_model:
   provider: "google"
   model_name: "models/text-embedding-004"
@@ -12,10 +11,9 @@ retriever:
 llm:
   groq:
     provider: "groq"
-    model_name: "deepseek-r1-distill-llama-70b"
+    model_name: "llama-3.1-8b-instant"
     temperature: 0
     max_output_tokens: 2048
-
   google:
     provider: "google"
     model_name: "gemini-2.0-flash"
