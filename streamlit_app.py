@@ -32,6 +32,12 @@ def get_model_loader():
     os.environ["GOOGLE_API_KEY"] = google_key
     os.environ["LLM_PROVIDER"] = "groq"
     os.environ["ENV"] = "local"
+    import asyncio
+    try:
+        loop = asyncio.get_event_loop()
+    except RuntimeError:
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
     try:
         from utils.model_loader import ModelLoader
         return ModelLoader()
