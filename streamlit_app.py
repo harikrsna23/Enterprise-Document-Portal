@@ -84,8 +84,11 @@ with tab1:
 
                         llm = loader.load_llm()
                         analyzer = DocumentAnalyzer()
-                        result = analyzer.analyze_document("\n".join([p.page_content for p in text_content]
-                        ))
+                        if isinstance(text_content[0], str):
+                                full_text = "\n".join(text_content)
+                        else:
+                            full_text = "\n".join([p.page_content for p in text_content])
+                        result = analyzer.analyze_document(full_text)
                         st.success("Analysis Complete!")
                         st.markdown(result)
             except Exception as e:
