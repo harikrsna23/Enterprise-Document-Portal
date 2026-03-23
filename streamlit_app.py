@@ -125,15 +125,19 @@ with tab3:
             try:
                 loader = get_model_loader()
                 if loader:
-                    from src.document_ingestion.data_ingestion import DocHandler
+                    from src.document_ingestion.data_ingestion import ChatIngestor
                     from src.document_chat.retrieval import ConversationalRAG
                     from utils.document_ops import FastAPIFileAdapter
+
+                    session_id = "streamlit_chat"
                     file_adapter = FastAPIFileAdapter(chat_file)
-                    handler = DocHandler(session_id="streamlit_chat")
-                    saved_path = handler.save_pdf(file_adapter)
-                    embeddings = loader.load_embeddings()
-                    rag = ConversationalRAG(session_id="streamlit_chat")
-                    rag.load_retriever_from_faiss(pdf_path=saved_path, embeddings=embeddings)
+
+                    ingestor = ChatIngestor(session_id=session_id)
+                    retriever = ingestor.built_retriver([file_adapter])
+
+                    rag = ConversationalRAG(session_id=session_id, retriever=retriever)
+                    rag._build_lcel_chain()
+
                     st.session_state.rag_chain = rag
                     st.session_state.chat_history = []
                     st.success("Document loaded! Ask me anything.")
