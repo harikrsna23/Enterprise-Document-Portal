@@ -84,8 +84,7 @@ with tab1:
 
                         llm = loader.load_llm()
                         analyzer = DocumentAnalyzer()
-                        result = analyzer.analyze("\n".join(
-                            [p.page_content for p in text_content]
+                        result = analyzer.analyze_document("\n".join([p.page_content for p in text_content]
                         ))
                         st.success("Analysis Complete!")
                         st.markdown(result)
